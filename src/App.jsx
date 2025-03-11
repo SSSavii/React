@@ -1,7 +1,9 @@
 /* eslint-disable no-undef */
 /* eslint-disable react/jsx-no-undef */
+/* eslint-disable no-unused-vars */
+import React from 'react';
 import './style.css';
-//import Header from './components/Header';
+import Header from './components/Header';
 import Footer from './components/Footer';
 import Menu from './components/Menu';
 import Content from './components/Content';

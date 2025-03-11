@@ -4,7 +4,7 @@ import Navigation from './Navigation';
 
 const Header = () => {
   return (
-    <header className="header">
+    <header className="Header">
       <div className="logo">React Labs</div>
       <Navigation />
     </header>
