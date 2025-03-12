@@ -1,6 +1,4 @@
-/* eslint-disable no-undef */
-/* eslint-disable react/jsx-no-undef */
-/* eslint-disable no-unused-vars */
+ /* eslint-disable no-unused-vars */
 import React, { useState } from 'react'; // Добавлен импорт useState
 import './style.css';
 import Header from './components/PageHeader';
