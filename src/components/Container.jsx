@@ -1,14 +1,13 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import Navigation from './Navigation';
 
-const Header = () => {
+const Container = ({ children }) => {
   return (
-    <header className="header">
-      <div className="logo">React Labs</div>
-      <Navigation />
-    </header>
+    <div className="container">
+      {children}
+    </div>
   );
 };
 
-export default Header;
+export default Container;

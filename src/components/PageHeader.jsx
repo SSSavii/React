@@ -4,8 +4,8 @@ import Navigation from './Navigation';
 
 const Header = () => {
   return (
-    <header className="Header">
-      <div className="logo">React Labs</div>
+    <header className="header">
+      <div className="logo">Lab3</div>
       <Navigation />
     </header>
   );
