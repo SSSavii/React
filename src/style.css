@@ -261,3 +261,284 @@ body {
   width: 100%;
   max-width: 300px;
 }
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth-form {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+}
+
+.error {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+.success {
+  color: green;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid green;
+  border-radius: 4px;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid red;
+  border-radius: 4px;
+}
+
+.auth-form {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.auth-form button {
+  margin-right: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.auth-form button[type="reset"] {
+  background-color: #6c757d;
+}
+
+.auth-form button:hover {
+  opacity: 0.9;
+}
+
+.feedback-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.feedback-form {
+  margin-bottom: 30px;
+}
+
+.feedback-form textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.feedback-list {
+  border-top: 1px solid #ccc;
+  padding-top: 20px;
+}
+
+.feedback-item {
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.feedback-item h4 {
+  margin: 0 0 10px 0;
+}
+
+.auth-form button {
+  margin-right: 10px;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-profile button {
+  padding: 5px 10px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.user-profile button:hover {
+  background: #c82333;
+}
+/* src/style.css */
+.app {
+  padding: 20px;
+}
+
+.auth-form {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.auth-form button {
+  margin-right: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.error {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+/* src/style.css */
+
+/* Общие стили для форм */
+.auth-form,
+.feedback-form,
+.feedback-list {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для темной темы */
+.dark-theme .auth-form,
+.dark-theme .feedback-form,
+.dark-theme .feedback-list {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+/* Стили для светлой темы */
+.light-theme .auth-form,
+.light-theme .feedback-form,
+.light-theme .feedback-list {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+/* Стили для инпутов */
+.auth-form input,
+.feedback-form input,
+.feedback-form textarea {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+/* Стили для кнопок */
+.auth-form button,
+.feedback-form button {
+  margin-right: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.auth-form button:hover,
+.feedback-form button:hover {
+  background-color: #0056b3;
+}
+
+/* Стили для отзывов */
+.feedback-item {
+  background-color: #ffffff;
+  color: #000000;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+/* Стили для заголовков в формах */
+.auth-form h3,
+.feedback-form h3,
+.feedback-list h3 {
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+/* Стили для сообщений об ошибках */
+.error {
+  color: #dc3545;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
+/* Стили для успешных сообщений */
+.success {
+  color: #28a745;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
+/* Дополнительные стили для улучшения читаемости */
+.auth-form label,
+.feedback-form label {
+  color: #000000;
+  font-weight: 500;
+}
+
+/* Стили для контейнера форм */
+.form-container {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+}
+/* Добавьте в style.css */
+.error {
+  color: #dc3545;
+  font-size: 0.9em;
+  margin-top: 5px;
+  padding: 5px;
+  background-color: rgba(220, 53, 69, 0.1);
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.auth-form .error {
+  color: #dc3545;
+  background-color: #ffffff;
+}

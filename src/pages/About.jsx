@@ -3,24 +3,25 @@
 import React, { useState, useEffect } from 'react';
 
 const About = () => {
-  const [visitCount, setVisitCount] = useState(0);
+  // Получаем начальное значение из localStorage или 0, если его нет
+  const [visitCount, setVisitCount] = useState(() => {
+    return parseInt(localStorage.getItem('visitCount') || 0);
+  });
   
-  // Простой пример useState
   const [name, setName] = useState('Студент');
   
-  // useEffect при монтировании
   useEffect(() => {
     console.log('About page mounted');
-    // Увеличиваем счетчик посещений
-    setVisitCount(prev => prev + 1);
+    // Увеличиваем счетчик и сохраняем в localStorage
+    const newCount = visitCount + 1;
+    setVisitCount(newCount);
+    localStorage.setItem('visitCount', newCount);
     
-    // Функция очистки при размонтировании
     return () => {
       console.log('About page unmounted');
     };
-  }, []);
+  }, []); // Зависимость пустая, чтобы эффект срабатывал только при монтировании
   
-  // useEffect с зависимостью
   useEffect(() => {
     document.title = `О ${name}`;
     

@@ -1,10 +1,14 @@
+/* eslint-disable react/jsx-no-undef */
 /* eslint-disable no-unused-vars */
-// src/App.jsx
 import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { ThemeContext } from './context/ThemeContext.jsx';
-import './style.css';
+import { useLoginState } from './hooks/useLoginState';
+import AuthForm from './components/AuthForm';
+import RegisterForm from './components/RegisterForm';
+import FeedbackForm from './components/FeedbackForm';
+import FeedbackList from './components/FeedbackList';
 import Header from './components/PageHeader';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -12,7 +16,7 @@ import About from './pages/About';
 import Counter from './components/Counter';
 import Container from './components/Container';
 import LabDetail from './pages/LabDetail';
-
+import './style.css';
 // Данные лабораторных работ
 const labs = [
   { 
@@ -176,20 +180,62 @@ const labs = [
 
 function App() {
   const [activeLab, setActiveLab] = useState(null);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [feedbacks, setFeedbacks] = useState([]);
   const { darkMode } = useContext(ThemeContext);
+  const { isLoggedIn, login, logout } = useLoginState();
 
   const handleLabSelect = (lab) => {
     setActiveLab(lab);
   };
 
+  const handleLogin = async ({ login: username, password }) => {
+    const success = login(username, password);
+    return success;
+  };
+
+  const handleRegister = (values) => {
+    console.log('Registration values:', values);
+    // Здесь будет логика регистрации
+    setIsRegistering(false);
+  };
+
+  const handleFeedbackSubmit = (feedback) => {
+    setFeedbacks([...feedbacks, { ...feedback, date: new Date().toISOString() }]);
+  };
+
+  if (!isLoggedIn) {
+    return (
+      <div className={`app ${darkMode ? 'dark-theme' : 'light-theme'}`}>
+        {isRegistering ? (
+          <RegisterForm 
+            onSubmit={handleRegister} 
+            onSwitch={() => setIsRegistering(false)} 
+          />
+        ) : (
+          <AuthForm 
+            onSubmit={handleLogin} 
+            onSwitch={() => setIsRegistering(true)} 
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className={`app ${darkMode ? 'dark-theme' : 'light-theme'}`}>
-      <Header />
+      <Header isLoggedIn={isLoggedIn} onLogout={logout} />
       <Container>
         <Routes>
           <Route path="/" element={<Home labs={labs} activeLab={activeLab} handleLabSelect={handleLabSelect} />} />
           <Route path="/about" element={<About />} />
           <Route path="/counter" element={<Counter />} />
+          <Route path="/feedback" element={
+            <div className="feedback-page">
+              <FeedbackForm onSubmit={handleFeedbackSubmit} />
+              <FeedbackList feedbacks={feedbacks} />
+            </div>
+          } />
           <Route path="/lab/:id" element={<LabDetail labs={labs} setActiveLab={setActiveLab} activeLab={activeLab} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
