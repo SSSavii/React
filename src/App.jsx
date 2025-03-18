@@ -1,11 +1,17 @@
- /* eslint-disable no-unused-vars */
-import React, { useState } from 'react'; // Добавлен импорт useState
+/* eslint-disable no-unused-vars */
+// src/App.jsx
+import React, { useState } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { ThemeContext } from './context/ThemeContext.jsx';
 import './style.css';
 import Header from './components/PageHeader';
 import Footer from './components/Footer';
-import Menu from './components/Menu';
-import Content from './components/Content';
+import Home from './pages/Home';
+import About from './pages/About';
+import Counter from './components/Counter';
 import Container from './components/Container';
+import LabDetail from './pages/LabDetail';
 
 // Данные лабораторных работ
 const labs = [
@@ -170,23 +176,23 @@ const labs = [
 
 function App() {
   const [activeLab, setActiveLab] = useState(null);
+  const { darkMode } = useContext(ThemeContext);
 
   const handleLabSelect = (lab) => {
     setActiveLab(lab);
   };
 
   return (
-    <div className="app">
+    <div className={`app ${darkMode ? 'dark-theme' : 'light-theme'}`}>
       <Header />
       <Container>
-        <div className="main-content">
-          <Menu 
-            labs={labs} 
-            activeLab={activeLab} 
-            onLabSelect={handleLabSelect} 
-          />
-          <Content activeLab={activeLab} />
-        </div>
+        <Routes>
+          <Route path="/" element={<Home labs={labs} activeLab={activeLab} handleLabSelect={handleLabSelect} />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/counter" element={<Counter />} />
+          <Route path="/lab/:id" element={<LabDetail labs={labs} setActiveLab={setActiveLab} activeLab={activeLab} />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </Container>
       <Footer />
     </div>
