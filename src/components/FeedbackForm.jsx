@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 // src/components/FeedbackForm.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 const FeedbackForm = ({ onSubmit }) => {
+  const [submitted, setSubmitted] = useState(false);
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -16,7 +17,7 @@ const FeedbackForm = ({ onSubmit }) => {
       name: Yup.string()
         .required('Обязательное поле'),
       email: Yup.string()
-        .email('Неверный формат email')
+        .matches(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Z|a-z]{2,}$/, 'Неверный формат email')
         .required('Обязательное поле'),
       message: Yup.string()
         .required('Обязательное поле')
@@ -28,6 +29,9 @@ const FeedbackForm = ({ onSubmit }) => {
     }
   });
 
+  const handleInputChange = () => {
+    setSubmitted(true);
+  };
   return (
     <div className="feedback-form">
       <h3>Обратная связь</h3>
@@ -37,10 +41,10 @@ const FeedbackForm = ({ onSubmit }) => {
           <input
             type="text"
             name="name"
-            onChange={formik.handleChange}
+            onChange={(e) => { formik.handleChange(e); handleInputChange(); }}
             value={formik.values.name}
           />
-          {formik.errors.name && (
+          {submitted && formik.errors.name && (
             <div className="error">{formik.errors.name}</div>
           )}
         </div>
@@ -49,10 +53,10 @@ const FeedbackForm = ({ onSubmit }) => {
           <input
             type="email"
             name="email"
-            onChange={formik.handleChange}
+            onChange={(e) => { formik.handleChange(e); handleInputChange(); }}
             value={formik.values.email}
           />
-          {formik.errors.email && (
+          {submitted && formik.errors.email && (
             <div className="error">{formik.errors.email}</div>
           )}
         </div>
@@ -60,10 +64,10 @@ const FeedbackForm = ({ onSubmit }) => {
           <label>Сообщение:</label><br />
           <textarea
             name="message"
-            onChange={formik.handleChange}
+            onChange={(e) => { formik.handleChange(e); handleInputChange(); }}
             value={formik.values.message}
           />
-          {formik.errors.message && (
+          {submitted && formik.errors.message && (
             <div className="error">{formik.errors.message}</div>
           )}
         </div>
