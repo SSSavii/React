@@ -1,11 +1,17 @@
 {
-    "feedbacks": [],
-    "users": [
-      {
-        "id": 1,
-        "login": "admin",
-        "password": "admin",
-        "email": "admin@example.com"
-      }
-    ]
-  }
+  "feedbacks": [
+    {
+      "id": "85c2",
+      "name": "sadasd",
+      "email": "asda@vsd.vc",
+      "message": "xczxczxzxczxczczxc"
+    }
+  ],
+  "users": [
+    {
+      "login": "admin",
+      "email": "admin@ex.com",
+      "id": "1"
+    }
+  ]
+}
