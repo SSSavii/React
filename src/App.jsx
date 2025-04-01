@@ -5,6 +5,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { ThemeContext } from './context/ThemeContext.jsx';
 import { useLoginState } from './hooks/useLoginState';
+import { Provider } from 'react-redux';
 import AuthForm from './components/AuthForm';
 import RegisterForm from './components/RegisterForm';
 import FeedbackForm from './components/FeedbackForm';
@@ -16,6 +17,7 @@ import About from './pages/About';
 import Counter from './components/Counter';
 import Container from './components/Container';
 import LabDetail from './pages/LabDetail';
+import store from './store';
 import './style.css';
 // Данные лабораторных работ
 const labs = [

@@ -4,9 +4,12 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useDispatch } from 'react-redux';
+import { createFeedback } from '../store/actions';
 
-const FeedbackForm = ({ onSubmit }) => {
+const FeedbackForm = () => {
   const [submitted, setSubmitted] = useState(false);
+  const dispatch = useDispatch();
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -14,8 +17,7 @@ const FeedbackForm = ({ onSubmit }) => {
       message: ''
     },
     validationSchema: Yup.object({
-      name: Yup.string()
-        .required('Обязательное поле'),
+      name: Yup.string().required('Обязательное поле'),
       email: Yup.string()
         .matches(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Z|a-z]{2,}$/, 'Неверный формат email')
         .required('Обязательное поле'),
@@ -24,8 +26,9 @@ const FeedbackForm = ({ onSubmit }) => {
         .min(10, 'Минимум 10 символов')
     }),
     onSubmit: (values, { resetForm }) => {
-      onSubmit(values);
+      dispatch(createFeedback(values));
       resetForm();
+      setSubmitted(false);
     }
   });
 

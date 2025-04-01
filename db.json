@@ -1,0 +1,11 @@
+{
+    "feedbacks": [],
+    "users": [
+      {
+        "id": 1,
+        "login": "admin",
+        "password": "admin",
+        "email": "admin@example.com"
+      }
+    ]
+  }

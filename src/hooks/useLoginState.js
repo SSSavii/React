@@ -6,15 +6,22 @@ export const useLoginState = () => {
     return localStorage.getItem('isLoggedIn') === 'true';
   });
 
-  const login = (username, password) => {
-    console.log('Login attempt:', username, password);
-    if (username === 'admin' && password === 'admin') {
-      setIsLoggedIn(true);
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('savedLogin', username);
-      return true;
+  const login = async (username, password) => {
+    try {
+      const response = await fetch('http://localhost:3001/users?login=' + username);
+      const users = await response.json();
+      
+      if (users.length > 0 && users[0].password === password) {
+        setIsLoggedIn(true);
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('savedLogin', username);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
     }
-    return false;
   };
 
   const logout = () => {
