@@ -1,5 +1,6 @@
+// src/store/index.js
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import {thunk} from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 
 // Начальное состояние для счетчика
 const initialCounterState = {
@@ -8,6 +9,13 @@ const initialCounterState = {
 
 // Начальное состояние для feedbacks
 const initialFeedbacksState = {
+  items: [],
+  loading: false,
+  error: null
+};
+
+// Начальное состояние для users
+const initialUsersState = {
   items: [],
   loading: false,
   error: null
@@ -40,6 +48,40 @@ const feedbacksReducer = (state = initialFeedbacksState, action) => {
       return { ...state, items: [...state.items, action.payload] };
     case 'DELETE_FEEDBACK_SUCCESS':
       return { ...state, items: state.items.filter(feedback => feedback.id !== action.payload) };
+    case 'TOGGLE_FEEDBACK_BLOCK':
+      return { 
+        ...state, 
+        items: state.items.map(item => 
+          item.id === action.payload 
+            ? { ...item, blocked: !item.blocked } 
+            : item
+        ) 
+      };
+    default:
+      return state;
+  }
+};
+
+// Reducer для users
+const usersReducer = (state = initialUsersState, action) => {
+  switch (action.type) {
+    case 'FETCH_USERS_START':
+      return { ...state, loading: true, error: null };
+    case 'FETCH_USERS_SUCCESS':
+      return { ...state, loading: false, items: action.payload };
+    case 'FETCH_USERS_FAILURE':
+      return { ...state, loading: false, error: action.payload };
+    case 'TOGGLE_USER_BLOCK':
+      return { 
+        ...state, 
+        items: state.items.map(user => 
+          user.id === action.payload 
+            ? { ...user, status: user.status === 'active' ? 'blocked' : 'active' } 
+            : user
+        ) 
+      };
+    case 'DELETE_USER':
+      return { ...state, items: state.items.filter(user => user.id !== action.payload) };
     default:
       return state;
   }
@@ -48,7 +90,8 @@ const feedbacksReducer = (state = initialFeedbacksState, action) => {
 // Объединяем все reducers
 const rootReducer = combineReducers({
   counter: counterReducer,
-  feedbacks: feedbacksReducer
+  feedbacks: feedbacksReducer,
+  users: usersReducer
 });
 
 // Создаем store

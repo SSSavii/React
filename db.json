@@ -1,18 +1,62 @@
 {
-  "feedbacks": [
-    {
-      "id": "85c2",
-      "name": "sadasd",
-      "email": "asda@vsd.vc",
-      "message": "xczxczxzxczxczczxc"
-    }
-  ],
   "users": [
     {
-      "login": "admin",
-      "email": "admin@ex.com",
-      "id": "1",
+      "id": 1,
+      "username": "admin",
+      "email": "admin@example.com",
+      "role": "admin",
+      "status": "active",
       "password": "admin"
+    },
+    {
+      "id": 2,
+      "username": "user1",
+      "email": "user1@example.com",
+      "role": "user",
+      "status": "active",
+      "password": "user1"
+    },
+    {
+      "id": 3,
+      "username": "user2",
+      "email": "user2@example.com",
+      "role": "user",
+      "status": "blocked",
+      "password": "user2"
+    },
+    {
+      "id": 4,
+      "username": "user3",
+      "email": "user3@example.com",
+      "role": "user",
+      "status": "active",
+      "password": "user3"
+    }
+  ],
+  "feedbacks": [
+    {
+      "id": 1,
+      "name": "Иван Иванов",
+      "email": "ivan@example.com",
+      "message": "Отличное приложение! Очень удобный интерфейс.",
+      "date": "2023-04-15T10:30:00Z",
+      "blocked": false
+    },
+    {
+      "id": 2,
+      "name": "Мария Сидорова",
+      "email": "maria@example.com",
+      "message": "Хотелось бы больше функций для редактирования профиля.",
+      "date": "2023-04-16T14:45:00Z",
+      "blocked": false
+    },
+    {
+      "id": 3,
+      "name": "Алексей Петров",
+      "email": "alex@example.com",
+      "message": "всё отлично!",
+      "date": "2023-04-17T09:15:00Z",
+      "blocked": true
     }
   ]
 }

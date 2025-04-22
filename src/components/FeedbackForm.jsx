@@ -1,15 +1,17 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 // src/components/FeedbackForm.jsx
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
 import { createFeedback } from '../store/actions';
+import { useLoginState } from '../hooks/useLoginState';
 
 const FeedbackForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const dispatch = useDispatch();
+  const { userRole } = useLoginState();
+  
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -35,6 +37,55 @@ const FeedbackForm = () => {
   const handleInputChange = () => {
     setSubmitted(true);
   };
+  
+  // Пользователи с ролью 'user' могут только отправлять отзывы
+  if (userRole === 'user') {
+    return (
+      <div className="feedback-form">
+        <h3>Обратная связь</h3>
+        <form onSubmit={formik.handleSubmit}>
+          <div>
+            <label>Имя:</label><br />
+            <input
+              type="text"
+              name="name"
+              onChange={(e) => { formik.handleChange(e); handleInputChange(); }}
+              value={formik.values.name}
+            />
+            {submitted && formik.errors.name && (
+              <div className="error">{formik.errors.name}</div>
+            )}
+          </div>
+          <div>
+            <label>Email:</label><br />
+            <input
+              type="email"
+              name="email"
+              onChange={(e) => { formik.handleChange(e); handleInputChange(); }}
+              value={formik.values.email}
+            />
+            {submitted && formik.errors.email && (
+              <div className="error">{formik.errors.email}</div>
+            )}
+          </div>
+          <div>
+            <label>Сообщение:</label><br />
+            <textarea
+              name="message"
+              onChange={(e) => { formik.handleChange(e); handleInputChange(); }}
+              value={formik.values.message}
+            />
+            {submitted && formik.errors.message && (
+              <div className="error">{formik.errors.message}</div>
+            )}
+          </div>
+          <button type="submit">Отправить</button>
+        </form>
+      </div>
+    );
+  }
+  
+  // Администраторы могут отправлять отзывы и видеть дополнительные действия
   return (
     <div className="feedback-form">
       <h3>Обратная связь</h3>

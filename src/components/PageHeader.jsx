@@ -2,42 +2,75 @@
 /* eslint-disable react/prop-types */
 // src/components/PageHeader.jsx
 import React, { useContext } from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Switch } from '@mui/material';
-import { Menu as MenuIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { ThemeContext } from '../context/ThemeContext.jsx';
+import { ThemeContext } from '../context/ThemeContext';
+import { AppBar, Toolbar, Typography, Button, IconButton, Switch, Box } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
 
-const Header = ({ isLoggedIn, onLogout, onMenuOpen }) => {
+const Header = ({ isLoggedIn, userRole, onLogout, onMenuOpen }) => {
   const { darkMode, toggleTheme } = useContext(ThemeContext);
 
   return (
     <AppBar position="static">
       <Toolbar>
         <IconButton
-          size="large"
           edge="start"
           color="inherit"
           aria-label="menu"
-          sx={{ mr: 2 }}
-          onClick={onMenuOpen} // Обработчик открытия меню
+          onClick={onMenuOpen}
         >
           <MenuIcon />
         </IconButton>
+        
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          React Labs
+          React App
         </Typography>
-        <Link to="/" style={{ color: 'white', textDecoration: 'none', marginRight: '10px' }}>
-          Главная
-        </Link>
-        <Link to="/about" style={{ color: 'white', textDecoration: 'none', marginRight: '10px' }}>
-          О себе
-        </Link>
-        <Switch checked={darkMode} onChange={toggleTheme} color="default" />
-        {isLoggedIn && (
-          <button onClick={onLogout} style={{color: 'white'}}>
-            Выйти
-          </button>
-        )}
+        
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
+            {darkMode ? <DarkModeIcon /> : <LightModeIcon />}
+            <Switch
+              checked={darkMode}
+              onChange={toggleTheme}
+              color="default"
+            />
+          </Box>
+          
+          <Button color="inherit" component={Link} to="/">
+            Главная
+          </Button>
+          
+          <Button color="inherit" component={Link} to="/about">
+            О себе
+          </Button>
+          
+          <Button color="inherit" component={Link} to="/feedback">
+            Обратная связь
+          </Button>
+          
+          {userRole === 'admin' && (
+            <Button color="inherit" component={Link} to="/admin">
+              Админ панель
+            </Button>
+          )}
+          
+          {isLoggedIn && (
+            <>
+              <IconButton color="inherit">
+                <AccountCircleIcon />
+              </IconButton>
+              <Typography variant="body1" sx={{ mr: 1 }}>
+                {userRole === 'admin' ? 'Админ' : 'Пользователь'}
+              </Typography>
+              <Button color="inherit" onClick={onLogout}>
+                Выйти
+              </Button>
+            </>
+          )}
+        </Box>
       </Toolbar>
     </AppBar>
   );

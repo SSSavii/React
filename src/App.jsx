@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 // src/App.jsx
 import React, { useState } from 'react';
@@ -16,8 +17,8 @@ import About from './pages/About';
 import Counter from './components/Counter';
 import Container from './components/Container';
 import LabDetail from './pages/LabDetail';
-import Menu from './components/Menu'; // Импортируем компонент Menu
-import store from './store';
+import Menu from './components/Menu';
+import AdminPanel from './pages/adminPanel';
 import './style.css';
 
 // Данные лабораторных работ
@@ -33,13 +34,25 @@ const labs = [
   { id: 9, name: "Тестирование и оптимизация", content: <div><h3>Лабораторная работа 9</h3><ol><li>Написать тест для компонента кнопки</li><li>Провести рефакторинг страницы со списком данных с сервера. Переписать запрос к backend через rtk-query(useGetPostsQuery).</li><li>Используя isError, isLoading, isFetching отрисовать спиннер загрузки, сообщение об ошибке и результат успешного запроса</li><li>* &quotЛенивые&quot импорты. Разбить приложение на Chunks (не обязательно)</li><li>Результат работы разместить на github отдельным коммитом.</li><li>Ссылку на репозиторий приложить к заданию</li></ol></div> }
 ];
 
+// Компонент для защищенных маршрутов администратора
+const AdminRoute = ({ children }) => {
+  const { userRole } = useLoginState();
+  
+  if (userRole !== 'admin') {
+    return <Navigate to="/" replace />;
+  }
+  
+  return children;
+};
+
+
 function App() {
   const [activeLab, setActiveLab] = useState(null);
   const [isRegistering, setIsRegistering] = useState(false);
-  const [feedbacks, setFeedbacks] = useState([]);
   const { darkMode } = useContext(ThemeContext);
   const { 
     isLoggedIn, 
+    userRole,
     login, 
     logout,
     isResettingPassword,
@@ -66,10 +79,6 @@ function App() {
   const handleRegister = (values) => {
     console.log('Registration values:', values);
     setIsRegistering(false);
-  };
-
-  const handleFeedbackSubmit = (feedback) => {
-    setFeedbacks([...feedbacks, { ...feedback, date: new Date().toISOString() }]);
   };
 
   const handleMenuOpen = () => {
@@ -119,28 +128,41 @@ function App() {
 
   return (
     <div className={`app ${darkMode ? 'dark-theme' : 'light-theme'}`}>
-      <Header isLoggedIn={isLoggedIn} onLogout={logout} onMenuOpen={handleMenuOpen} />
+      <Header 
+        isLoggedIn={isLoggedIn} 
+        userRole={userRole}
+        onLogout={logout} 
+        onMenuOpen={handleMenuOpen} 
+      />
       <Menu
         labs={labs}
         open={menuOpen}
         onClose={handleMenuClose}
         activeLab={activeLab}
         onLabSelect={handleLabSelect}
+        userRole={userRole}
       />
       <Container>
-        <Routes>
-          <Route path="/" element={<Home labs={labs} activeLab={activeLab} handleLabSelect={handleLabSelect} />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/counter" element={<Counter />} />
-          <Route path="/feedback" element={
-            <div className="feedback-page">
-              <FeedbackForm onSubmit={handleFeedbackSubmit} />
-              <FeedbackList feedbacks={feedbacks} />
-            </div>
-          } />
-          <Route path="/lab/:id" element={<LabDetail labs={labs} setActiveLab={setActiveLab} activeLab={activeLab} />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+    <Routes>
+      <Route path="/" element={<Home labs={labs} activeLab={activeLab} handleLabSelect={handleLabSelect} />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/counter" element={<Counter />} />
+      <Route path="/feedback" element={
+        <div className="feedback-page">
+          <FeedbackForm />
+          <FeedbackList isAdmin={userRole === 'admin'} />
+        </div>
+      } />
+      <Route path="/lab/:id" element={<LabDetail labs={labs} setActiveLab={setActiveLab} activeLab={activeLab} />} />
+      
+      {/* Используем обычный Route вместо AdminRoute */}
+      <Route 
+        path="/admin" 
+        element={userRole === 'admin' ? <AdminPanel /> : <Navigate to="/" replace />} 
+      />
+      
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
       </Container>
       <Footer />
     </div>
