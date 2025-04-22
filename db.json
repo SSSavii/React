@@ -11,7 +11,8 @@
     {
       "login": "admin",
       "email": "admin@ex.com",
-      "id": "1"
+      "id": "1",
+      "password": "admin"
     }
   ]
 }

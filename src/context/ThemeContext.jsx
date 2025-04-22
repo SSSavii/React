@@ -1,36 +1,32 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 // src/context/ThemeContext.jsx
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState } from 'react';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-export const ThemeContext = createContext();
+export const ThemeContext = createContext({
+  darkMode: false,
+  toggleTheme: () => {},
+});
 
-export const ThemeProvider = ({ children }) => {
-  const [darkMode, setDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    return savedTheme === 'dark';
-  });
-
-  useEffect(() => {
-    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
-    document.body.className = darkMode ? 'dark-theme' : 'light-theme';
-    
-    // Этот console.log демонстрирует useEffect при монтировании
-    console.log('Theme effect applied on mount or theme change');
-    
-    // Демонстрация useEffect с функцией очистки (при размонтировании)
-    return () => {
-      console.log('Theme component unmounting');
-    };
-  }, [darkMode]);
+export const ThemeContextProvider = ({ children }) => {
+  const [darkMode, setDarkMode] = useState(false);
 
   const toggleTheme = () => {
     setDarkMode(!darkMode);
   };
 
+  const theme = createTheme({
+    palette: {
+      mode: darkMode ? 'dark' : 'light',
+    },
+  });
+
   return (
     <ThemeContext.Provider value={{ darkMode, toggleTheme }}>
-      {children}
+      <ThemeProvider theme={theme}>
+        {children}
+      </ThemeProvider>
     </ThemeContext.Provider>
   );
 };

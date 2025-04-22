@@ -2,25 +2,30 @@
 /* eslint-disable react/prop-types */
 // src/components/Menu.jsx
 import React from 'react';
+import { Drawer, List, ListItem, ListItemText } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-const Menu = ({ labs, activeLab, onLabSelect }) => {
+const Menu = ({ labs, open, onClose, activeLab, onLabSelect }) => {
   return (
-    <div className="menu">
-      <h3>Лабораторные работы</h3>
-      <ul>
-        {labs.map(lab => (
-          <li 
-            key={lab.id} 
-            className={activeLab && activeLab.id === lab.id ? 'active' : ''}
+    <Drawer anchor="left" open={open} onClose={onClose}>
+      <List>
+        {labs.map((lab) => (
+          <ListItem
+            button
+            key={lab.id}
+            component={Link}
+            to={`/lab/${lab.id}`}
+            onClick={() => {
+              onLabSelect(lab);
+              onClose(); // Закрываем меню после выбора
+            }}
+            selected={activeLab && activeLab.id === lab.id}
           >
-            <Link to={`/lab/${lab.id}`} onClick={() => onLabSelect(lab)}>
-              {lab.id}: {lab.name}
-            </Link>
-          </li>
+            <ListItemText primary={`${lab.id}: ${lab.name}`} />
+          </ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Drawer>
   );
 };
 

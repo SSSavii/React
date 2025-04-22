@@ -1,29 +1,45 @@
-/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 // src/components/PageHeader.jsx
 import React, { useContext } from 'react';
+import { AppBar, Toolbar, IconButton, Typography, Switch } from '@mui/material';
+import { Menu as MenuIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import ThemeToggle from './ThemeToggle';
 import { ThemeContext } from '../context/ThemeContext.jsx';
-import UserProfile from './UserProfile';
 
-const Header = ({ isLoggedIn, onLogout }) => {
-  const { darkMode } = useContext(ThemeContext);
-  
+const Header = ({ isLoggedIn, onLogout, onMenuOpen }) => {
+  const { darkMode, toggleTheme } = useContext(ThemeContext);
+
   return (
-    <header className={`header ${darkMode ? 'dark' : 'light'}`}>
-      <div className="logo">React Labs</div>
-      <nav className="navigation">
-        <ul>
-          <li><Link to="/">Главная</Link></li>
-          <li><Link to="/about">О себе</Link></li>
-          <li><Link to="/counter">Счетчик</Link></li>
-          <li><Link to="/feedback">Обратная связь</Link></li>
-          <li><ThemeToggle /></li>
-          {isLoggedIn && <li><UserProfile onLogout={onLogout} /></li>}
-        </ul>
-      </nav>
-    </header>
+    <AppBar position="static">
+      <Toolbar>
+        <IconButton
+          size="large"
+          edge="start"
+          color="inherit"
+          aria-label="menu"
+          sx={{ mr: 2 }}
+          onClick={onMenuOpen} // Обработчик открытия меню
+        >
+          <MenuIcon />
+        </IconButton>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          React Labs
+        </Typography>
+        <Link to="/" style={{ color: 'white', textDecoration: 'none', marginRight: '10px' }}>
+          Главная
+        </Link>
+        <Link to="/about" style={{ color: 'white', textDecoration: 'none', marginRight: '10px' }}>
+          О себе
+        </Link>
+        <Switch checked={darkMode} onChange={toggleTheme} color="default" />
+        {isLoggedIn && (
+          <button onClick={onLogout} style={{color: 'white'}}>
+            Выйти
+          </button>
+        )}
+      </Toolbar>
+    </AppBar>
   );
 };
 

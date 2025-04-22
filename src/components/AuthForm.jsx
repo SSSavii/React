@@ -5,8 +5,10 @@ import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-const AuthForm = ({ onSubmit }) => {
+const AuthForm = ({ onSubmit, onSwitch, onResetPassword }) => {
   const [authError, setAuthError] = useState('');
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [resetMessage, setResetMessage] = useState('');
 
   const formik = useFormik({
     initialValues: {
@@ -25,6 +27,55 @@ const AuthForm = ({ onSubmit }) => {
     }
   });
 
+  const handleResetClick = () => {
+    setShowResetPassword(true);
+    onResetPassword();
+  };
+
+  const handleBackToLogin = () => {
+    setShowResetPassword(false);
+    setResetMessage('');
+  };
+
+  if (showResetPassword) {
+    return (
+      <div className="auth-form block">
+        <h3>Сброс пароля</h3>
+        <p>Введите новый пароль для пользователя {formik.values.login}</p>
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          onResetPassword(formik.values.login);
+          setResetMessage('Пароль успешно изменен!');
+          setTimeout(() => {
+            setShowResetPassword(false);
+          }, 2000);
+        }}>
+          <div>
+            <label>Новый пароль:</label><br />
+            <input
+              type="password"
+              name="newPassword"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.newPassword || ''}
+              required
+            />
+          </div>
+          {resetMessage && <div className="success">{resetMessage}</div>}
+          <div style={{ marginTop: '10px' }}>
+            <button type="submit">Сохранить новый пароль</button>
+            <button 
+              type="button" 
+              onClick={handleBackToLogin}
+            >
+              Назад к входу
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  }
+
   return (
     <div className="auth-form block">
       <h3>Форма входа</h3>
@@ -35,7 +86,7 @@ const AuthForm = ({ onSubmit }) => {
             type="text"
             name="login"
             onChange={(e) => {
-              setAuthError(''); // Очищаем ошибку при изменении полей
+              setAuthError('');
               formik.handleChange(e);
             }}
             onBlur={formik.handleBlur}
@@ -51,7 +102,7 @@ const AuthForm = ({ onSubmit }) => {
             type="password"
             name="password"
             onChange={(e) => {
-              setAuthError(''); // Очищаем ошибку при изменении полей
+              setAuthError('');
               formik.handleChange(e);
             }}
             onBlur={formik.handleBlur}
@@ -72,6 +123,19 @@ const AuthForm = ({ onSubmit }) => {
             }}
           >
             Очистить
+          </button>
+          <button 
+            type="button"
+            onClick={onSwitch}
+          >
+            Регистрация
+          </button>
+          <button 
+            type="button"
+            onClick={handleResetClick}
+            style={{ marginLeft: '10px' }}
+          >
+            Забыли пароль?
           </button>
         </div>
       </form>
