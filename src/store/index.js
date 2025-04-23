@@ -1,27 +1,9 @@
-// src/store/index.js
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { thunk } from 'redux-thunk';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { postsApi } from '../api/postsApi';
 
-// Начальное состояние для счетчика
-const initialCounterState = {
-  value: 0
-};
+// Начальное состояние и редьюсер для счетчика
+const initialCounterState = { value: 0 };
 
-// Начальное состояние для feedbacks
-const initialFeedbacksState = {
-  items: [],
-  loading: false,
-  error: null
-};
-
-// Начальное состояние для users
-const initialUsersState = {
-  items: [],
-  loading: false,
-  error: null
-};
-
-// Reducer для счетчика
 const counterReducer = (state = initialCounterState, action) => {
   switch (action.type) {
     case 'INCREMENT':
@@ -35,7 +17,13 @@ const counterReducer = (state = initialCounterState, action) => {
   }
 };
 
-// Reducer для feedbacks
+// Редьюсер для feedbacks (без изменений)
+const initialFeedbacksState = {
+  items: [],
+  loading: false,
+  error: null
+};
+
 const feedbacksReducer = (state = initialFeedbacksState, action) => {
   switch (action.type) {
     case 'FETCH_FEEDBACKS_START':
@@ -62,7 +50,13 @@ const feedbacksReducer = (state = initialFeedbacksState, action) => {
   }
 };
 
-// Reducer для users
+// Редьюсер для users (без изменений)
+const initialUsersState = {
+  items: [],
+  loading: false,
+  error: null
+};
+
 const usersReducer = (state = initialUsersState, action) => {
   switch (action.type) {
     case 'FETCH_USERS_START':
@@ -87,17 +81,19 @@ const usersReducer = (state = initialUsersState, action) => {
   }
 };
 
-// Объединяем все reducers
+// Объединяем редьюсеры, включая reducer RTK Query
 const rootReducer = combineReducers({
   counter: counterReducer,
   feedbacks: feedbacksReducer,
-  users: usersReducer
+  users: usersReducer,
+  [postsApi.reducerPath]: postsApi.reducer,
 });
 
-// Создаем store
-const store = createStore(
-  rootReducer,
-  applyMiddleware(thunk)
-);
+// Создаем store с добавлением middleware RTK Query
+const store = configureStore({
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(postsApi.middleware),
+});
 
 export default store;

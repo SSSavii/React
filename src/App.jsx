@@ -1,9 +1,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 // src/App.jsx
-import React, { useState } from 'react';
+import React, { useState, Suspense, useContext } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useContext } from 'react';
 import { ThemeContext } from './context/ThemeContext.jsx';
 import { useLoginState } from './hooks/useLoginState';
 import AuthForm from './components/AuthForm';
@@ -12,15 +11,16 @@ import FeedbackForm from './components/FeedbackForm';
 import FeedbackList from './components/FeedbackList';
 import Header from './components/PageHeader';
 import Footer from './components/Footer';
-import Home from './pages/Home';
-import About from './pages/About';
 import Counter from './components/Counter';
 import Container from './components/Container';
-import LabDetail from './pages/LabDetail';
 import Menu from './components/Menu';
-import AdminPanel from './pages/adminPanel';
 import './style.css';
 
+// Ленивый импорт страниц
+const Home = React.lazy(() => import('./pages/Home'));
+const About = React.lazy(() => import('./pages/About'));
+const LabDetail = React.lazy(() => import('./pages/LabDetail'));
+const AdminPanel = React.lazy(() => import('./pages/adminPanel'));
 // Данные лабораторных работ
 const labs = [
   { id: 1, name: "JavaScript Events и LocalStorage", content: <div><h3>Лабораторная работа 1</h3><p><strong>Задание:</strong></p><ol><li>Реализовать скрипт, который уведомит о полной загрузке страницы</li><li>Реализовать кнопку счетчик, которая будет увеличивать счетчик на &quot1&quot и вывести его значение на страницу (button onclick)</li><li>Реализовать кнопку счетчик, которая будет уменьшать счетчик на &quot1&quot реализовать с помощью listener click</li><li>Реализовать форму аутентификации пользователя (form)</li><li>Реализовать скрипт очистки данных формы</li><li>Реализовать скрипт отправки данных формы с помощью listener submit.</li><li>Без отправки на сервер провести валидацию введенных данных, если login==&quotadmin&quot & pass==&quotadmin&quot вывести сообщение об успехе, иначе сообщение о неуспехе</li><li>Реализовать скрипт сохранения учетных данных и автоподстановку оных с помощью localStorage</li></ol></div> },
@@ -33,18 +33,6 @@ const labs = [
   { id: 8, name: "Таблицы и роли пользователей", content: <div><h3>Лабораторная работа 8</h3><ol><li>Внедрить в проект таблицы react-table.</li><li>Добавить роли пользователей admin, user</li><li>Реализовать блок администрирования для роли admin</li><li>Реализовать страницу список пользователей в виде таблицы</li><li>Добавить действия Удалить, Заблокировать и тд</li><li>Перенести в блок администрирования блок обратной связи</li><li>Добавить действия Удалить, Заблокировать и тд</li><li>В пользовательском приложении оставить блок обратной связи только на чтение</li><li>Добавить возможность сортировки и перетаскивания колонок.</li><li>* Реализовать динамическую подгрузку данных (виртуализация) при скроллировании</li><li>* Для просмотра на мобильных устройствах зафиксировать первую колонку, остальные скроллировать.</li><li>Разместить лабораторную работу в репозиторий в github отдельным коммитом</li><li>Прикрепить сылку на проект в виде текста</li></ol></div> },
   { id: 9, name: "Тестирование и оптимизация", content: <div><h3>Лабораторная работа 9</h3><ol><li>Написать тест для компонента кнопки</li><li>Провести рефакторинг страницы со списком данных с сервера. Переписать запрос к backend через rtk-query(useGetPostsQuery).</li><li>Используя isError, isLoading, isFetching отрисовать спиннер загрузки, сообщение об ошибке и результат успешного запроса</li><li>* &quotЛенивые&quot импорты. Разбить приложение на Chunks (не обязательно)</li><li>Результат работы разместить на github отдельным коммитом.</li><li>Ссылку на репозиторий приложить к заданию</li></ol></div> }
 ];
-
-// Компонент для защищенных маршрутов администратора
-const AdminRoute = ({ children }) => {
-  const { userRole } = useLoginState();
-  
-  if (userRole !== 'admin') {
-    return <Navigate to="/" replace />;
-  }
-  
-  return children;
-};
-
 
 function App() {
   const [activeLab, setActiveLab] = useState(null);
@@ -89,6 +77,7 @@ function App() {
     setMenuOpen(false);
   };
 
+  // Если пользователь не авторизован — показываем форму авторизации, регистрации или сброса пароля
   if (!isLoggedIn) {
     return (
       <div className={`app ${darkMode ? 'dark-theme' : 'light-theme'}`}>
@@ -126,6 +115,7 @@ function App() {
     );
   }
 
+  // Если пользователь авторизован — отображаем главное приложение
   return (
     <div className={`app ${darkMode ? 'dark-theme' : 'light-theme'}`}>
       <Header 
@@ -143,26 +133,38 @@ function App() {
         userRole={userRole}
       />
       <Container>
-    <Routes>
-      <Route path="/" element={<Home labs={labs} activeLab={activeLab} handleLabSelect={handleLabSelect} />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/counter" element={<Counter />} />
-      <Route path="/feedback" element={
-        <div className="feedback-page">
-          <FeedbackForm />
-          <FeedbackList isAdmin={userRole === 'admin'} />
-        </div>
-      } />
-      <Route path="/lab/:id" element={<LabDetail labs={labs} setActiveLab={setActiveLab} activeLab={activeLab} />} />
-      
-      {/* Используем обычный Route вместо AdminRoute */}
-      <Route 
-        path="/admin" 
-        element={userRole === 'admin' ? <AdminPanel /> : <Navigate to="/" replace />} 
-      />
-      
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        <Suspense fallback={<div>Загрузка страницы...</div>}>
+          <Routes>
+            <Route 
+              path="/" 
+              element={<Home labs={labs} activeLab={activeLab} handleLabSelect={handleLabSelect} />} 
+            />
+            <Route path="/about" element={<About />} />
+            <Route path="/counter" element={<Counter />} />
+            <Route 
+              path="/feedback" 
+              element={
+                <div className="feedback-page">
+                  <FeedbackForm />
+                  <FeedbackList isAdmin={userRole === 'admin'} />
+                </div>
+              } 
+            />
+            <Route 
+              path="/lab/:id" 
+              element={<LabDetail labs={labs} setActiveLab={setActiveLab} activeLab={activeLab} />} 
+            />
+            <Route 
+              path="/admin" 
+              element={
+                userRole === 'admin' 
+                  ? <AdminPanel />
+                  : <Navigate to="/" replace />
+              } 
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
       </Container>
       <Footer />
     </div>
