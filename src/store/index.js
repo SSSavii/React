@@ -1,11 +1,24 @@
-/* eslint-disable no-undef */
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import thunk from 'redux-thunk';
-import { postsApi } from '../services/postsApi';
+// src/store/index.js
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { thunk } from 'redux-thunk';
 
 // Начальное состояние для счетчика
 const initialCounterState = {
   value: 0
+};
+
+// Начальное состояние для feedbacks
+const initialFeedbacksState = {
+  items: [],
+  loading: false,
+  error: null
+};
+
+// Начальное состояние для users
+const initialUsersState = {
+  items: [],
+  loading: false,
+  error: null
 };
 
 // Reducer для счетчика
@@ -20,13 +33,6 @@ const counterReducer = (state = initialCounterState, action) => {
     default:
       return state;
   }
-};
-
-// Начальное состояние для feedbacks
-const initialFeedbacksState = {
-  items: [],
-  loading: false,
-  error: null
 };
 
 // Reducer для feedbacks
@@ -54,13 +60,6 @@ const feedbacksReducer = (state = initialFeedbacksState, action) => {
     default:
       return state;
   }
-};
-
-// Начальное состояние для users
-const initialUsersState = {
-  items: [],
-  loading: false,
-  error: null
 };
 
 // Reducer для users
@@ -92,16 +91,13 @@ const usersReducer = (state = initialUsersState, action) => {
 const rootReducer = combineReducers({
   counter: counterReducer,
   feedbacks: feedbacksReducer,
-  users: usersReducer,
-  [postsApi.reducerPath]: postsApi.reducer
+  users: usersReducer
 });
 
-// Создаем store с помощью configureStore
-const store = configureStore({
-  reducer: rootReducer,
-  middleware: (getDefaultMiddleware) => 
-    getDefaultMiddleware().concat(thunk, postsApi.middleware),
-  devTools: process.env.NODE_ENV !== 'production'
-});
+// Создаем store
+const store = createStore(
+  rootReducer,
+  applyMiddleware(thunk)
+);
 
 export default store;

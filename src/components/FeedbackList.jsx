@@ -1,29 +1,37 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 // src/components/FeedbackList.jsx
-import React from 'react';
-import {
-  useGetFeedbacksQuery,
-  useDeleteFeedbackMutation,
-  useToggleFeedbackBlockMutation,
-} from '../store/apiSlice';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { loadFeedbacks, removeFeedback, blockFeedback } from '../store/actions';
 
 const FeedbackList = ({ isAdmin = false }) => {
-  const { data: feedbacks = [], isLoading, isError, error } = useGetFeedbacksQuery();
-  const [deleteFeedback] = useDeleteFeedbackMutation();
-  const [toggleFeedbackBlock] = useToggleFeedbackBlockMutation();
+  const dispatch = useDispatch();
+  const { items, loading, error } = useSelector(state => state.feedbacks);
 
-  if (isLoading) return <p>Загрузка отзывов...</p>;
-  if (isError) return <p>Ошибка загрузки: {error?.message}</p>;
+  useEffect(() => {
+    dispatch(loadFeedbacks());
+  }, [dispatch]);
+
+  const handleDelete = (id) => {
+    dispatch(removeFeedback(id));
+  };
+
+  const handleBlockFeedback = (id) => {
+    dispatch(blockFeedback(id));
+  };
+
+  if (loading) return <p>Загрузка отзывов...</p>;
+  if (error) return <p>Ошибка: {error}</p>;
 
   return (
     <div className="feedback-list">
       <h3>Отзывы</h3>
-      {feedbacks.length === 0 ? (
+      {items.length === 0 ? (
         <p>Пока нет отзывов</p>
       ) : (
         <div className="feedback-items">
-          {feedbacks.map((feedback) => (
+          {items.map((feedback) => (
             <div key={feedback.id} className="feedback-item">
               <h4>{feedback.name}</h4>
               <p>{feedback.email}</p>
@@ -31,12 +39,10 @@ const FeedbackList = ({ isAdmin = false }) => {
               {feedback.blocked && <p className="blocked-message">Этот отзыв заблокирован</p>}
               {isAdmin && (
                 <div className="admin-actions">
-                  <button
-                    onClick={() => toggleFeedbackBlock(feedback.id)}
-                  >
+                  <button onClick={() => handleBlockFeedback(feedback.id)}>
                     {feedback.blocked ? 'Разблокировать' : 'Заблокировать'}
                   </button>
-                  <button onClick={() => deleteFeedback(feedback.id)}>Удалить</button>
+                  <button onClick={() => handleDelete(feedback.id)}>Удалить</button>
                 </div>
               )}
             </div>
