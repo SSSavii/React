@@ -1,25 +1,24 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 // src/App.jsx
-import React, { useState } from 'react';
+import React, { Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { ThemeContext } from './context/ThemeContext.jsx';
 import { useLoginState } from './hooks/useLoginState';
-import AuthForm from './components/AuthForm';
-import RegisterForm from './components/RegisterForm';
-import FeedbackForm from './components/FeedbackForm';
-import FeedbackList from './components/FeedbackList';
 import Header from './components/PageHeader';
 import Footer from './components/Footer';
-import Home from './pages/Home';
-import About from './pages/About';
-import Counter from './components/Counter';
-import Container from './components/Container';
-import LabDetail from './pages/LabDetail';
 import Menu from './components/Menu';
-import AdminPanel from './pages/adminPanel';
 import './style.css';
+
+// Lazy loaded components
+const Home = React.lazy(() => import('./pages/Home'));
+const About = React.lazy(() => import('./pages/About'));
+const Counter = React.lazy(() => import('./components/Counter'));
+const FeedbackPage = React.lazy(() => import('./pages/Feedbackpage.jsx'));
+const AdminPanel = React.lazy(() => import('./pages/adminPanel'));
+const AuthForm = React.lazy(() => import('./components/AuthForm')); // Lazy load AuthForm
+const RegisterForm = React.lazy(() => import('./components/RegisterForm'));
 
 // Данные лабораторных работ
 const labs = [
@@ -34,26 +33,25 @@ const labs = [
   { id: 9, name: "Тестирование и оптимизация", content: <div><h3>Лабораторная работа 9</h3><ol><li>Написать тест для компонента кнопки</li><li>Провести рефакторинг страницы со списком данных с сервера. Переписать запрос к backend через rtk-query(useGetPostsQuery).</li><li>Используя isError, isLoading, isFetching отрисовать спиннер загрузки, сообщение об ошибке и результат успешного запроса</li><li>* &quotЛенивые&quot импорты. Разбить приложение на Chunks (не обязательно)</li><li>Результат работы разместить на github отдельным коммитом.</li><li>Ссылку на репозиторий приложить к заданию</li></ol></div> }
 ];
 
-// Компонент для защищенных маршрутов администратора
+// Component for protected admin routes
 const AdminRoute = ({ children }) => {
   const { userRole } = useLoginState();
-  
+
   if (userRole !== 'admin') {
     return <Navigate to="/" replace />;
   }
-  
+
   return children;
 };
 
-
 function App() {
-  const [activeLab, setActiveLab] = useState(null);
-  const [isRegistering, setIsRegistering] = useState(false);
+  const [activeLab, setActiveLab] = React.useState(null);
+  const [isRegistering, setIsRegistering] = React.useState(false);
   const { darkMode } = useContext(ThemeContext);
-  const { 
-    isLoggedIn, 
+  const {
+    isLoggedIn,
     userRole,
-    login, 
+    login,
     logout,
     isResettingPassword,
     resetUsername,
@@ -63,9 +61,9 @@ function App() {
     resetMessage,
     startPasswordReset,
     cancelPasswordReset,
-    resetPassword
+    resetPassword,
   } = useLoginState();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = React.useState(false);
 
   const handleLabSelect = (lab) => {
     setActiveLab(lab);
@@ -92,47 +90,49 @@ function App() {
   if (!isLoggedIn) {
     return (
       <div className={`app ${darkMode ? 'dark-theme' : 'light-theme'}`}>
-        {isResettingPassword ? (
-          <div className="reset-password-form">
-            <h3>Сброс пароля</h3>
-            <input
-              value={resetUsername}
-              onChange={(e) => setResetUsername(e.target.value)}
-              placeholder="Ваш логин"
+        <Suspense fallback={<div>Loading...</div>}>
+          {isResettingPassword ? (
+            <div className="reset-password-form">
+              <h3>Сброс пароля</h3>
+              <input
+                value={resetUsername}
+                onChange={(e) => setResetUsername(e.target.value)}
+                placeholder="Ваш логин"
+              />
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Новый пароль"
+              />
+              <button onClick={resetPassword}>Сохранить</button>
+              <button onClick={cancelPasswordReset}>Отмена</button>
+              {resetMessage && <p>{resetMessage}</p>}
+            </div>
+          ) : isRegistering ? (
+            <RegisterForm
+              onSubmit={handleRegister}
+              onSwitch={() => setIsRegistering(false)}
             />
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Новый пароль"
+          ) : (
+            <AuthForm
+              onSubmit={handleLogin}
+              onSwitch={() => setIsRegistering(true)}
+              onResetPassword={startPasswordReset}
             />
-            <button onClick={resetPassword}>Сохранить</button>
-            <button onClick={cancelPasswordReset}>Отмена</button>
-            {resetMessage && <p>{resetMessage}</p>}
-          </div>
-        ) : isRegistering ? (
-          <RegisterForm
-            onSubmit={handleRegister}
-            onSwitch={() => setIsRegistering(false)}
-          />
-        ) : (
-          <AuthForm
-            onSubmit={handleLogin}
-            onSwitch={() => setIsRegistering(true)}
-            onResetPassword={startPasswordReset}
-          />
-        )}
+          )}
+        </Suspense>
       </div>
     );
   }
 
   return (
     <div className={`app ${darkMode ? 'dark-theme' : 'light-theme'}`}>
-      <Header 
-        isLoggedIn={isLoggedIn} 
+      <Header
+        isLoggedIn={isLoggedIn}
         userRole={userRole}
-        onLogout={logout} 
-        onMenuOpen={handleMenuOpen} 
+        onLogout={logout}
+        onMenuOpen={handleMenuOpen}
       />
       <Menu
         labs={labs}
@@ -142,28 +142,29 @@ function App() {
         onLabSelect={handleLabSelect}
         userRole={userRole}
       />
-      <Container>
-    <Routes>
-      <Route path="/" element={<Home labs={labs} activeLab={activeLab} handleLabSelect={handleLabSelect} />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/counter" element={<Counter />} />
-      <Route path="/feedback" element={
-        <div className="feedback-page">
-          <FeedbackForm />
-          <FeedbackList isAdmin={userRole === 'admin'} />
-        </div>
-      } />
-      <Route path="/lab/:id" element={<LabDetail labs={labs} setActiveLab={setActiveLab} activeLab={activeLab} />} />
-      
-      {/* Используем обычный Route вместо AdminRoute */}
-      <Route 
-        path="/admin" 
-        element={userRole === 'admin' ? <AdminPanel /> : <Navigate to="/" replace />} 
-      />
-      
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-      </Container>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route
+            path="/"
+            element={<Home labs={labs} activeLab={activeLab} handleLabSelect={handleLabSelect} />}
+          />
+          <Route path="/about" element={<About />} />
+          <Route path="/counter" element={<Counter />} />
+          <Route
+            path="/feedback"
+            element={
+              <div className="feedback-page">
+                <FeedbackPage />
+              </div>
+            }
+          />
+          <Route
+            path="/admin"
+            element={userRole === 'admin' ? <AdminPanel /> : <Navigate to="/" replace />}
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
       <Footer />
     </div>
   );
