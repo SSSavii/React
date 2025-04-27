@@ -1,14 +1,17 @@
 /* eslint-disable no-undef */
-module.exports = {
+// jest.config.js
+/** @type {import('jest').Config} */
+const config = {
+  verbose: true,
   testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['@testing-library/jest-dom'],
   transform: {
     '^.+\\.(js|jsx)$': 'babel-jest'
   },
-  moduleNameMapper: {
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy'
-  },
+  moduleFileExtensions: ['js', 'jsx'],
   transformIgnorePatterns: [
-    '/node_modules/(?!your-module-to-transform)'
-  ]
+    'node_modules/(?!(@babel|react|react-dom)/)'
+  ],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js']
 };
+
+export default config;
