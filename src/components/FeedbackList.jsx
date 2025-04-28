@@ -4,6 +4,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadFeedbacks, removeFeedback, blockFeedback } from '../store/actions';
+import { CircularProgress, Alert } from '@mui/material'; // Import MUI components
 
 const FeedbackList = ({ isAdmin = false }) => {
   const dispatch = useDispatch();
@@ -21,8 +22,15 @@ const FeedbackList = ({ isAdmin = false }) => {
     dispatch(blockFeedback(id));
   };
 
-  if (loading) return <p>Загрузка отзывов...</p>;
-  if (error) return <p>Ошибка: {error}</p>;
+  // Display loading spinner
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
+      <CircularProgress />
+    </div>
+  );
+
+  // Display error message
+  if (error) return <Alert severity="error">{`Ошибка: ${error}`}</Alert>;
 
   return (
     <div className="feedback-list">

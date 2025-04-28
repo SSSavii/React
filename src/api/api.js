@@ -1,7 +1,10 @@
 // src/api/api.js
 const API_URL = 'http://localhost:3001';
 
+const delay = (ms) => new Promise(res => setTimeout(res, ms)); // Функция задержки
+
 export const fetchFeedbacks = async () => {
+  await delay(1000); // Добавляем задержку в 1 секунду (можно настроить)
   const response = await fetch(`${API_URL}/feedbacks`);
   if (!response.ok) {
     throw new Error('Failed to fetch feedbacks');
@@ -10,6 +13,7 @@ export const fetchFeedbacks = async () => {
 };
 
 export const addFeedback = async (feedback) => {
+  await delay(500); // Задержка перед POST запросом
   const response = await fetch(`${API_URL}/feedbacks`, {
     method: 'POST',
     headers: {
@@ -24,6 +28,7 @@ export const addFeedback = async (feedback) => {
 };
 
 export const deleteFeedback = async (id) => {
+  await delay(500); // Задержка перед DELETE запросом
   const response = await fetch(`${API_URL}/feedbacks/${id}`, {
     method: 'DELETE',
   });
@@ -34,6 +39,7 @@ export const deleteFeedback = async (id) => {
 };
 
 export const blockFeedbackApi = async (id) => {
+  await delay(500); // Задержка перед PATCH запросом
   // Получаем текущее состояние отзыва
   const getFeedback = await fetch(`${API_URL}/feedbacks/${id}`);
   if (!getFeedback.ok) {
@@ -59,6 +65,7 @@ export const blockFeedbackApi = async (id) => {
 };
 
 export const fetchUsers = async () => {
+  await delay(500); // Задержка перед GET запросом
   const response = await fetch(`${API_URL}/users`);
   if (!response.ok) {
     throw new Error('Failed to fetch users');
@@ -67,6 +74,7 @@ export const fetchUsers = async () => {
 };
 
 export const toggleUserBlockApi = async (id) => {
+   await delay(500); // Задержка перед PATCH запросом
   // Получаем текущее состояние пользователя
   const getUser = await fetch(`${API_URL}/users/${id}`);
   if (!getUser.ok) {
@@ -92,6 +100,7 @@ export const toggleUserBlockApi = async (id) => {
 };
 
 export const deleteUserApi = async (id) => {
+   await delay(500); // Задержка перед DELETE запросом
   const response = await fetch(`${API_URL}/users/${id}`, {
     method: 'DELETE',
   });
@@ -102,6 +111,7 @@ export const deleteUserApi = async (id) => {
 };
 
 export const updateUserProfile = async (userId, userData) => {
+   await delay(500); // Задержка перед PUT запросом
   const response = await fetch(`${API_URL}/users/${userId}`, {
     method: 'PUT',
     headers: {
