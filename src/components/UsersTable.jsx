@@ -46,14 +46,14 @@ const UsersTable = () => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   
   // Определение колонок
-  const [columns, setColumns] = useState([
+  const columns= [
     { id: 'id', header: 'ID', accessor: 'id', sticky: true },
     { id: 'username', header: 'Логин', accessor: 'username' },
     { id: 'email', header: 'Email', accessor: 'email' },
     { id: 'role', header: 'Роль', accessor: 'role' },
     { id: 'status', header: 'Статус', accessor: 'status' },
     { id: 'actions', header: 'Действия' }
-  ]);
+  ];
   
   // Порядок колонок
   const [columnOrder, setColumnOrder] = useState(['id', 'username', 'email', 'role', 'status', 'actions']);

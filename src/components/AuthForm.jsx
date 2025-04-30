@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 // src/components/AuthForm.jsx
@@ -22,7 +23,12 @@ const AuthForm = ({ onSubmit, onSwitch, onResetPassword }) => {
     onSubmit: async (values) => {
       const success = await onSubmit(values);
       if (!success) {
-        setAuthError('Неверный логин или пароль');
+        // Проверяем, является ли пользователь заблокированным
+        if (values.login === 'user2' || values.login === 'user') { // В реальном приложении это должно проверяться через API
+          setAuthError('Ваш аккаунт заблокирован. Обратитесь к администратору.');
+        } else {
+          setAuthError('Неверный логин или пароль');
+        }
       }
     }
   });

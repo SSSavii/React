@@ -28,20 +28,30 @@ export const useLoginState = () => {
     // В реальном приложении здесь был бы запрос к API
     let success = false;
     let role = 'user';
+    let status = 'active';
     
     // Проверка для демонстрационных учетных записей
     if (username === 'admin' && password === 'admin') {
       success = true;
       role = 'admin';
+      status = 'active';
     } else if (username === 'user' && password === 'user') {
       success = true;
       role = 'user';
+      status = 'blocked';
     } else if (username === 'user1' && password === 'user1') {
       success = true;
       role = 'user';
+      status = 'active';
     } else if (username === 'user2' && password === 'user2') {
       success = true;
       role = 'user';
+      status = 'blocked'; // Этот пользователь заблокирован
+    }
+    
+    // Проверка статуса пользователя
+    if (status === 'blocked') {
+      return false; // Запрещаем вход заблокированным пользователям
     }
     
     if (success) {
@@ -54,7 +64,7 @@ export const useLoginState = () => {
         username,
         role,
         email: `${username}@example.com`,
-        status: 'active'
+        status
       };
       
       localStorage.setItem('userData', JSON.stringify(user));
